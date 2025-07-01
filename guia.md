@@ -182,24 +182,189 @@ Atente-se para os sistemas encontrados. Ele deve informar que encontrou os arqui
 
 Senha do root:
 
-	passwd
+`passwd`
 
 Criação de usuário:
 
-	useradd -m -g users -G wheel,storage,power,video,audio -s /bin/bash seu_usuario
- 
-	passwd seu_usuario
+`useradd -m -g users -G wheel,storage,power,video,audio -s /bin/bash seu_usuario `
 
-	EDITOR=nano visudo
+`passwd seu_usuario`
+
+`EDITOR=nano visudo`
 
 Descomente para permitir aos membros do grupo `wheel` executar qualquer comando:
 
-	%wheel ALL=(ALL:ALL) ALL
+`%wheel ALL=(ALL:ALL) ALL`
 
 Atualize o sistema:
 
-	su - seu_usuario
+`su - seu_usuario`
+
+`sudo pacman -Syu`
+
+`exit`
+
+### **Timezone, locale e hostname**
+
+Para definir a timezone do sistema:
+
+	ln -sf /usr/share/zoneinfo
+
+	ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
+	hwclock --systohc
+
+Para definir o padrão de teclas:
+
+	nano /etc/locale.gen
+
+Descomente:
+
+	pt_BR.UTF-8 UTF-8
+
+Gere o arquivo `locale`:
+
+	locale-gen
+
+Edite o arquivo `locale`:
+
+	nano /etc/locale.conf
+
+Adicione `LANG=pt_BR.UTF-8`.
+
+Edite o arquivo `hostname`:
+
+	nano /etc/hostname
+
+Adicione `archlinux`.
+
+Edite o arquivo `hosts`.
+
+	nano /etc/hosts
+
+Adicione:
+
+	127.0.0.1       localhost
+	::1                 localhost
+	127.0.1.1        archlinux.localdomain archlinux
+
+### **Configuração inicial de Rede e Bluetooth**
+
+	systemctl enable NetworkManager
+	
+	systemctl enable bluetooth
+
+### **Finalizando instalação**
+
+	exit
+
+	umount -R /mnt
+
+	reboot
+
+### **Bootando no novo sistema**
+
+Para se conectar a uma nova rede Wi-Fi. Verifique o status da conexão:
+
+	nmcli dev status
+
+Ligue o dispositivo:
+
+	nmcli radio wifi on
+
+Para listar as redes disponíveis:
+
+	nmcli dev wifi list
+
+Selecione a rede desejada e conecte-se com sua senha:
+
+	sudo nmcli dev wifi connect wlan password ~password~
+
+Teste a conexão:
+
+	ping google.com
+
+Ctrl + C para interromper.
+
+### **Configuração da interface gráfica (KDE PLASMA)**
+
+Rode uma atualização completa do sistema:
 
 	sudo pacman -Syu
 
-	exit
+Instalando todos os pacotes necessários:
+
+	sudo pacman -S xorg sddm plasma-meta plasma-wayland-session dolphin konsole kwrite libreoffice-fresh firefox cargo clang cmake make gcc noto-fonts noto-fonts-emoji ttf-dejavu ttf-font-awesome
+
+Opcional:
+
+	sudo pacman -S kde-applications
+
+Para iniciar a interface gráfica do KDE:
+
+	sudo systemctl enable sddm
+
+	sudo systemctl start sddm
+
+### **Configurações Pós-Instalação**
+
+Embora eu não recomende baixar apps do Flathub (a loja de aplicativos), é útil ter o flatpak instalado:
+
+	sudo pacman -Sy flatpak
+
+Instale aplicativos do Flathub apenas se não estiverem disponíveis no AUR. Isso evitará tornar seu sistema instável e cheio de bugs.
+
+Por falar nele, para instalar apps do AUR, precisamos instalar o `yay`:
+
+	sudo pacman -S git go
+
+	git clone https://aur.archlinux.org/yay.git
+
+	cd yay
+
+	makepkg -si
+
+Para instalar qualquer app do AUR:
+
+	yay -S nome_do_app_no_AUR
+
+### **Configuração visual do Pacman**
+
+	nano /etc/pacman.conf
+
+Descomente:
+
+    Color
+    ILoveCandy
+    VerbosePkgLists
+
+### **Configurações adicionais de teclado**
+
+No `konsole`, digite:
+
+	loadkeys br_abnt2
+
+Edite:
+
+	sudo nano /etc/vconsole.conf
+
+Adicione `KEYMAP=br_abnt2`.
+
+Edite:
+
+	sudo nano /etc/X11/xorg.conf.d/00-keyboard.conf
+
+Adicione:
+
+    Add Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "br"
+        Option "XkbModel" "abnt2"
+    EndSection
+
+Reinicie o sistema:
+
+	reboot
+
+
