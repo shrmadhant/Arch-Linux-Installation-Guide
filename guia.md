@@ -180,24 +180,24 @@ Atente-se para os sistemas encontrados. Ele deve informar que encontrou os arqui
 
 Senha do root:
 
-`passwd`
+	passwd
 
 Criação de usuário:
 
-`useradd -m -g users -G wheel,storage,power,video,audio -s /bin/bash seu_usuario `
+	useradd -m -g users -G wheel,storage,power,video,audio -s /bin/bash seu_usuario
+ 
+	passwd seu_usuario
 
-`passwd seu_usuario`
-
-`EDITOR=nano visudo`
+	EDITOR=nano visudo
 
 Descomente para permitir aos membros do grupo `wheel` executar qualquer comando:
 
-`%wheel ALL=(ALL:ALL) ALL`
+	%wheel ALL=(ALL:ALL) ALL
 
 Atualize o sistema:
 
-`su - seu_usuario`
+	su - seu_usuario
 
-`sudo pacman -Syu`
+	sudo pacman -Syu
 
-`exit`
+	exit
